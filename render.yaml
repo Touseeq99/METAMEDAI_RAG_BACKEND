@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: rag-app
+    runtime: python
+    autoDeploy: true
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+      - key: OPENAI_EMBEDDING_MODEL
+        value: text-embedding-3-small
+      - key: PINECONE_API_KEY
+        sync: false
+      - key: PINECONE_CLOUD
+        value: aws
+      - key: PINECONE_REGION
+        value: us-west-2
+      - key: PINECONE_INDEX_NAME
+        value: rag-index
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 10000
+      - key: WEB_CONCURRENCY
+        value: 4
+      - key: GUNICORN_THREADS
+        value: 2
+      - key: GUNICORN_TIMEOUT
+        value: 60
+      - key: LOG_LEVEL
+        value: info
+    buildCommand: |
+      pip install -U pip
+      pip install -r requirements.txt
+    startCommand: |
+      gunicorn -c gunicorn_conf.py main:app
+    healthCheckPath: /health
